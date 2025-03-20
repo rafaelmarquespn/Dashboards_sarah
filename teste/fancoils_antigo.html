@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráfico de Temperatura e Umidade</title>
+    <!--script src="https://cdn.jsdelivr.net/npm/chart.js"></script-->
+    <!--script src="https://code.jquery.com/jquery-3.6.0.min.js"></script-->
+    <script src="http://192.168.30.102/teste/chart.js.download"></script>
+    <script src="http://192.168.30.102/teste/jquery-3.6.0.min.js.download"></script>
+</head>
+<body>
+    <label for="area">Área Atendida:</label>
+    <select id="area" name="area">
+        <option value="">Selecione uma opção</option>
+    </select>
+
+    <canvas id="chart"></canvas>
+
+    <script>
+        let chart; // Variável global para manter uma referência ao gráfico
+        $(document).ready(function() {
+            $.ajax({
+                url: 'fetch_areas.php',
+                dataType: 'html',
+                success: function(data) {
+                    $('#area').html(data);
+                }
+            });
+
+            $('#area').on('change', function() {
+                var selectedArea = $(this).val();
+                //console.log(selectedArea);
+                if (selectedArea !== '') {
+                    $.ajax({
+                        url: 'api.php',
+                        method: 'GET',
+                        dataType: 'json',
+                        data: { area: selectedArea },
+                        success: function(data) {
+                            if(chart){
+                                chart.destroy();
+                            }                            
+                            drawChart(data);
+                        }
+                    });
+                }
+            });
+        });
+
+        function drawChart(data) {         
+            var labels = data.map(function(item) {
+                return item.data;
+            });
+
+            var temperatureData = data.map(function(item) {
+                return item.temperatura;
+            });
+
+            var humidityData = data.map(function(item) {
+                return item.umidade;
+            });
+
+            var ctx = document.getElementById('chart').getContext('2d');
+            chart=new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Temperatura',
+                            data: temperatureData,
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            fill: false
+                        },
+                        {
+                            label: 'Umidade',
+                            data: humidityData,
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            reverse: true, // Reverse x-axis
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Data'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Valor'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

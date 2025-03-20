@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grafico de Temperatura</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <canvas id="chart"></canvas>
+
+    <script>
+        // Função para criar o gráfico
+        function createChart(data) {
+            // Preparando os dados para o gráfico
+            const labels = data.map(row => row.data);
+            const tempData = data.map(row => row.temperatura);
+            const humidityData = data.map(row => row.umidade);
+
+            // Criando o gráfico usando Chart.js
+            const ctx = document.getElementById('chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temperatura',
+                        data: tempData,
+                        borderColor: 'rgb(75, 192, 19)',
+                        fill: false
+                    },{label: 'Umidade',
+                        data: humidityData,
+                        borderColor: 'rgb(0, 0, 255)',
+                        fill: false}]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            reverse:true,
+                            title: {
+                                display: true,
+                                text: 'Data'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Temperatura'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Faz a solicitação AJAX para a API e cria o gráfico
+        $(document).ready(function() {
+            $.ajax({
+                url: 'api.php', // caminho para a sua API
+                method: 'GET',
+                dataType: 'json',
+                data: { table:"rm2_exames" },
+                success: function(data) {
+                    createChart(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erro na solicitação AJAX:', error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

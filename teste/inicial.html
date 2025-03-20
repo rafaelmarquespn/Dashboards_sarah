@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Selecione uma opção</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <style>
+        body, html {
+            height: 100%;
+        }
+
+        .container {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-group {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="btn-group-vertical">
+            <button type="button" class="btn btn-primary btn-lg btn-block" onclick="navigateTo('fancoils')">Fancoils</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block" onclick="navigateTo('bombas_rms')">Bombas RM's</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block" onclick="navigateTo('chillers')">Chillers</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block" onclick="navigateTo('skids')">Skids</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block" onclick="navigateTo('freezers')">Freezers</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block" onclick="navigateTo('geladeiras')">Geladeiras</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block" onclick="navigateTo('multimedidores')">Multimedidores</button>
+        </div>
+    </div>
+
+    <script>
+        function navigateTo(option) {
+            // Redireciona para a página correspondente à opção selecionada
+            window.location.href = option + '.html';
+        }
+    </script>
+</body>
+</html>

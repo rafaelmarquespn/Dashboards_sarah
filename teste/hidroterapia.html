@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráfico de Histório Temperatura Chillers</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f7f7f7;           
+        }
+
+        .chart-container {
+            max-width: 100%;
+            display: flex;
+            align-items:stretch;
+            justify-content:center;
+           
+        }   
+        #chart{
+            height: 50%;
+            max-width: 100%;
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col">
+                <label for="dataInicial">Data Inicial:</label>
+                <input type="date" id="dataInicial" name="dataInicial" class="form-control">
+            </div>
+            <div class="col">
+                <label for="dataFinal">Data Final:</label>
+                <input type="date" id="dataFinal" name="dataFinal" class="form-control">
+            </div>
+            <div class="col d-flex align-items-stretch justify-content-start">
+                <button id="btnEnviar" class="btn btn-primary">Enviar</button>
+                <button id="btnPdf" class="btn btn-primary">Baixar pdf</button>
+            </div>
+        </div><br>
+            <div class="col">
+                <h6 style="text-align:center;">Intervalo de Tempo</h6>
+                <div class="form " style="text-align: center;"> 
+                    <input type="radio" id="minuto1" name="minuto" value=1>
+                    <label for="minuto1">1 Minuto </label>   
+                    <input type="radio" id="minuto5" name="minuto" value=5>
+                    <label for="minuto15">5 Minutos </label>
+                    <input type="radio" id="minuto10" name="minuto" value=10>
+                    <label for="minuto15">10 Minutos </label>              
+                    <input type="radio" id="minuto15" name="minuto" value=15>
+                    <label for="minuto15">15 Minutos </label> 
+                    <input type="radio" id="minuto30" name="minuto" value="30">
+                    <label for="minuto30">30 Minutos </label> 
+                    <input type="radio" id="hora" name="minuto" value="60" checked>
+                    <label for="hora">1 Hora</label>                     
+                </div>
+            </div>
+        
+            <div class="chart-container mt-3" >
+                    <canvas id="chart"></canvas>     
+            </div>
+    </div>              
+    <script src="chart.js.download"></script>
+    <script src="jquery-3.6.0.min.js.download"></script>
+    <script src="./js/scripthidro.js"></script>
+</body>
+</html>

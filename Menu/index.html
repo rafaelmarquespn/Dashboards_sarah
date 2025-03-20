@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Principal</title>
+    <style>
+        /* Estilo Geral */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #FFA726, #2196F3); /* Laranja para Azul */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(135deg, #FF7043, #42A5F5); /* Tons de Laranja e Azul */
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .menu a:hover {
+            background: linear-gradient(135deg, #FFAB91, #90CAF9); /* Cores claras no hover */
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .menu a {
+                font-size: 1rem;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Menu Principal</h1>
+    <div class="menu">
+        <a href="http://bsbmanutcoord02/cc/" target="_blank">Centro cirúrgico</a>
+        <a href="http://bsbmanutcoord02/rm/" target="_blank">Ressonância magnética</a>
+        <a href="http://bsbmanutcoord02/farm/" target="_blank">Farmácia</a>
+        <a href="http://bsbmanutcoord02/patologia/" target="_blank">Patologia</a>
+    </div>
+</body>
+</html>

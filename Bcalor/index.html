@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoramento de Bombas de Calor</title>
+  <!-- Certifique-se de que os caminhos para os arquivos JS estejam corretos -->
+  <script src="jquery-3.6.0.min.js.download"></script>
+  <script src="jquery.knob.min.js.download"></script>
+  <script src="./chart.js.download"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .gauges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    .gauge-container {
+      text-align: center;
+      margin: 10px 20px;
+    }
+    .gauge-container h3 {
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+    .chart-container {    
+      width: 100%;
+      max-width: 800px;
+      height: 400px; /* Ajuste conforme necessário */
+      margin: 20px auto;
+      padding-bottom: 40px;
+      /* max-width: 100%; */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    canvas {
+      background-color: #fff;
+      margin-bottom: 30px;
+      /* width: 100% !important;
+      height: 100% !important; */
+    }
+    .btn-primary {
+    background-color: blueviolet;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Monitoramento de Bombas de Calor</h1>
+
+    <!-- Seção de gauges para Bomba de Calor 1 -->
+    <h2>Bomba de Calor 1 - Tempo Real</h2>
+    <div class="gauges" id="gaugesBomba1">
+      <div class="gauge-container">
+        <input id="knobB1_Entrada" class="knob" data-width="150" data-height="150" data-fgColor="#4CAF50" data-min="0" data-max="200" value="0" readonly>
+        <h3>Entrada</h3>
+      </div>
+      <div class="gauge-container">
+        <input id="knobB1_Saida" class="knob" data-width="150" data-height="150" data-fgColor="#33B5E5" data-min="0" data-max="200" value="0" readonly>
+        <h3>Saída</h3>
+      </div>
+      <div class="gauge-container">
+        <input id="knobB1_Tanque" class="knob" data-width="150" data-height="150" data-fgColor="#9C27B0" data-min="0" data-max="100" value="0" readonly>
+        <h3>Tanque</h3>
+      </div>
+    </div>
+
+    <!-- Seção de gauges para Bomba de Calor 2 -->
+    <h2>Bomba de Calor 2 - Tempo Real</h2>
+    <div class="gauges" id="gaugesBomba2">
+      <div class="gauge-container">
+        <input id="knobB2_Entrada" class="knob" data-width="150" data-height="150" data-fgColor="#4CAF50" data-min="0" data-max="200" value="0" readonly>
+        <h3>Entrada</h3>
+      </div>
+      <div class="gauge-container">
+        <input id="knobB2_Saida" class="knob" data-width="150" data-height="150" data-fgColor="#33B5E5" data-min="0" data-max="200" value="0" readonly>
+        <h3>Saída</h3>
+      </div>
+      <div class="gauge-container">
+        <input id="knobB2_Tanque" class="knob" data-width="150" data-height="150" data-fgColor="#9C27B0" data-min="0" data-max="100" value="0" readonly>
+        <h3>Tanque</h3>
+      </div>
+    </div>
+
+    <!-- Seção de gráficos históricos -->
+    <div class="chart-container">
+      <h2>Histórico - Bomba de Calor 1</h2>
+      <canvas id="chart" width="600" height="300"></canvas>
+        </div>
+
+
+    <!-- Botão para acessar a página com histórico detalhado -->
+    <button class="btn-primary" onclick="location.href='rm.html'">Histórico Detalhado</button>
+  </div>
+
+  <audio id="alertSound" src="tic.wav" preload="auto"></audio>
+
+  <script>
+    // Inicializa os knobs
+    $(".knob").knob({ readOnly: true });
+
+
+    // Função para carregar dados históricos iniciais
+    function loadInitialData() {
+        $.ajax({
+            url: 'js/dados_iniciais.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(initialData) {
+                console.log(initialData);
+                if (initialData.bomba_de_calor1 && initialData.bomba_de_calor1.length > 0) {
+                    drawChart(initialData.bomba_de_calor1, initialData.bomba_de_calor2);
+                }
+                //fetchRealTimeData();
+                setInterval(fetchRealTimeData, 1000);
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro ao carregar dados iniciais: ' + error);
+            }
+        });
+    }
+
+    // Função para atualizar o gráfico
+    function updateChart(data) {
+        const currentTime = new Date().toLocaleTimeString();
+
+        if (chart.data.labels.length > 300) {
+            chart.data.labels.shift();
+            chart.data.datasets.forEach(dataset => dataset.data.shift());
+        }
+
+        chart.data.labels.push(currentTime);
+        chart.data.datasets[0].data.push(data.Bomba1.Entrada);
+        chart.data.datasets[1].data.push(data.Bomba1.Saida);
+        chart.data.datasets[2].data.push(data.Bomba2.Entrada);
+        chart.data.datasets[3].data.push(data.Bomba2.Saida);
+
+        chart.update();
+    }
+
+    // Função para desenhar um único gráfico
+    function drawChart(data1, data2) {
+        let labels = data1.map(item => item.time);
+        let entradaB1 = data1.map(item => item.Entrada);
+        let saidaB1 = data1.map(item => item.Saida);
+        let entradaB2 = data2.map(item => item.Entrada);
+        let saidaB2 = data2.map(item => item.Saida);
+
+        const ctx = document.getElementById('chart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Entrada Bomba 1',
+                        data: entradaB1,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                        fill: true
+                    },
+                    {
+                        label: 'Saída Bomba 1',
+                        data: saidaB1,
+                        borderColor: '#33B5E5',
+                        backgroundColor: 'rgba(51, 181, 229, 0.2)',
+                        fill: true
+                    },
+                    {
+                        label: 'Entrada Bomba 2',
+                        data: entradaB2,
+                        borderColor: '#FFA500',
+                        backgroundColor: 'rgba(255, 165, 0, 0.2)',
+                        fill: true
+                    },
+                    {
+                        label: 'Saída Bomba 2',
+                        data: saidaB2,
+                        borderColor: '#FF0000',
+                        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: true,
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Entradas e Saídas das Bombas'
+                    }
+                },
+                scales: {
+                    x: { display: true, title: { display: true, text: 'Horário' } },
+                    y: { display: true, title: { display: true, text: 'Valores' } }
+                }
+            }
+        });
+    }
+
+    // Função para buscar dados em tempo real
+    function fetchRealTimeData() {
+        $.ajax({
+            url: 'js/dados.php',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data.Bomba1) {
+                    $('#knobB1_Entrada').val(data.Bomba1.Entrada).trigger('change');
+                    $('#knobB1_Saida').val(data.Bomba1.Saida).trigger('change');
+                    $('#knobB1_Tanque').val(data.Bomba1.Tanque).trigger('change');
+                }
+                if (data.Bomba2) {
+                    $('#knobB2_Entrada').val(data.Bomba2.Entrada).trigger('change');
+                    $('#knobB2_Saida').val(data.Bomba2.Saida).trigger('change');
+                    $('#knobB2_Tanque').val(data.Bomba2.Tanque).trigger('change');
+                }
+
+                updateChart(data);
+
+                // Alerta de valores altos
+                if ((data.Bomba1 && (data.Bomba1.Entrada > 150 || data.Bomba1.Saida > 150)) ||
+                    (data.Bomba2 && (data.Bomba2.Entrada > 150 || data.Bomba2.Saida > 150))) {
+                    $('body').css('background-color', '#FF0000');
+                    document.getElementById('alertSound').play().catch(console.error);
+                } else {
+                    $('body').css('background-color', '#f4f4f9');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro ao buscar dados: ' + error);
+            }
+        });
+    }
+
+    // Inicia o carregamento dos dados históricos
+    loadInitialData();
+</script>
+
+</body>
+</html>

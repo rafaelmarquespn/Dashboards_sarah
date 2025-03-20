@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>RM</title>
+    <script src="style/pdfmake.min.js.download"></script>
+    <script src="style/vfs_fonts.js.download"></script>
+    <link rel="stylesheet" href="style/bootstrap.min.css">
+    <link rel="icon" href="style/Farm.png" type="image/png">
+    <link rel="stylesheet" href="style/style_RM.css">
+</head>
+<body>
+    <div id="loadingMessage" style="display: none;">
+        <div class="spinner"></div>
+        <p>Aguarde, estamos processando os dados...</p>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">Filtros das Ressonâncias</h1>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <label for="dataInicial">Data Inicial:</label>
+                <input type="date" id="dataInicial" name="dataInicial" class="form-control">
+            </div>
+            <div class="col-md-6 mb-3 mb-md-0">
+                <label for="dataFinal">Data Final:</label>
+                <input type="date" id="dataFinal" name="dataFinal" class="form-control">
+            </div>
+        </div>
+
+        <div class="text-center mb-4">
+            <button id="btnEnviar" class="btn btn-primary" title="Clique para pesquisar os dados no período selecionado acima">Pesquisar</button>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+
+    <script src="./chart.js.download"></script>
+    <script src="./jquery-3.6.0.min.js.download"></script>
+    <script src="./js/rm_script.js"></script>
+</body>
+</html>

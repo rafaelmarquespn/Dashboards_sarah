@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráfico de Temperatura e Umidade</title>
+    <!--script src="https://cdn.jsdelivr.net/npm/chart.js"></script-->
+    <!--script src="https://code.jquery.com/jquery-3.6.0.min.js"></script-->
+    <script src="http://192.168.30.102/teste/chart.js.download"></script>
+    <script src="http://192.168.30.102/teste/jquery-3.6.0.min.js.download"></script>
+</head>
+<body>
+    <label for="table">Tabela:</label>
+    <input type="text" id="table" name="table">
+    <button onclick="createChart()">Gerar Gráfico</button>
+    <canvas id="chart"></canvas>
+    <select name="table" id="tabela">
+        <?php include 'tabelas_bd.php'; ?>
+    </select>
+    <script>
+        
+    </script>
+
+    <script>
+        let chart; // Variável global para manter uma referência ao gráfico
+
+        // Função para criar o gráfico
+        function createChart() {
+            // Obtém o nome da tabela inserido no campo de entrada
+            const table = document.getElementById('table').value;
+
+            // Faz a solicitação AJAX para a API com o nome da tabela escolhida
+            $.ajax({
+                url: 'api.php',
+                method: 'GET',
+                dataType: 'json',
+                data: { table: table },
+                success: function(data) {
+                    // Limpa o gráfico existente, se houver
+                    if (chart) {
+                        chart.destroy();
+                    }
+
+                    // Desenha o gráfico com os novos dados
+                    drawChart(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erro na solicitação AJAX:', error);
+                }
+            });
+        }
+
+        // Função para desenhar o gráfico
+        function drawChart(data) {
+            // Preparando os dados para o gráfico
+            const labels = data.map(row => row.data);
+            const tempData = data.map(row => row.temperatura);
+            const humidityData = data.map(row => row.umidade);
+
+            // Criando o gráfico usando Chart.js
+            const ctx = document.getElementById('chart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temperatura',
+                        data: tempData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        fill: false
+                    }, {
+                        label: 'Umidade',
+                        data: humidityData,
+                        borderColor: 'rgb(192, 75, 192)',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            display: true,
+                            reverse: true, // Reverse x-axis
+                            title: {
+                                display: true,
+                                text: 'Temperatura / Umidade'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Data'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Gráfico de Temperatura e Umidade',
+                            font: {
+                                size: 18
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            top: 20
+                        }
+                    },
+                    elements: {
+                        point: {
+                            radius: 0
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    maintainAspectRatio: true,
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    responsiveAnimationDuration: 0
+                }
+            });
+        }
+    </script>
+</body>
+</html>

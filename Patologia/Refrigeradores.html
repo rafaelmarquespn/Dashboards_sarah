@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Refrigeradores
+    </title>
+    <script src="style/pdfmake.min.js.download"></script>
+    <script src="style/vfs_fonts.js.download"></script>
+    <link rel="stylesheet" href="style/bootstrap.min.css">
+    <link rel="icon" href="style/Farm.png" type="image/png">
+    <link rel="stylesheet" href="style/style_refri.css">
+</head>
+<body>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">Refrigeradores</h1>
+            <div class="dropdown">
+                <button class="dropdown-btn">Menu</button>
+                <div class="dropdown-content">
+                    <a href="index.html">Tempo real</a>
+                    <a href="Fancoils.html">Salas</a>
+                    <a href="Refrigeradores.html">Refrigeradores</a>
+                </div>
+            </div>
+        </div>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3 mb-md-0">
+                <label for="area">Área escolhida:</label>
+                <select id="area" name="area" class="form-control">
+                    <option value="escravo19"   selected  >BIOLOGIA MOLECULAR</option>
+                    <option value="escravo1"              >BIOQUIMICA ANALITICA</option>
+                    <option value="escravo2"              >BIOQUIMICA GENETICA II</option>
+                    <option value="escravo13"             >BIOQUIMICA I</option>
+                    <option value="escravo14"             >BIOQUIMICA II</option>
+                    <option value="escravo10"             >BIOQUIMICA GENETICA</option>
+                    <option value="escravo8"              >CITOGENETICA I</option>
+                    <option value="escravo9"              >CITOGENETICA II</option>
+                    <option value="escravo5"              >HEMATOLOGIA</option>
+                    <option value="escravo12"             >IMUNOLOGIA</option>
+                    <option value="escravo11"             >IMUNOLOGIA II</option>
+                    <option value="escravo22"             >IMUNOLOGIA III</option>
+                    <option value="escravo21"             >IMUNOLOGIA IV</option>
+                    <option value="escravo20"             >MICROBIOLOGIA II</option>
+                    <option value="escravo15"             >MICROBIOLOGIA</option>
+                    <option value="serial_53443"          >BIOQUIMICA</option>
+                    <option value="serial_53449"          >HEMATOLOGIA</option>
+                    <option value="serial_53450"          >RESERVA</option>
+                    <option value="serial_65274"          >AMOSTRAS PROCESSADAS</option>
+                    <option value="serial_65275"          >IMUNO I</option>
+                    <option value="serial_65276"          >IMUNO II</option>
+                    <option value="serial_65277"          >MICROBIOLOGIA IV</option>
+                    <option value="serial_65282"          >MICROBIOLOGIA III</option>
+                    <option value="serial_65281"          >TRANSFUSIONAL REFRIGERADOR</option>
+                    <option value="serial_965281"         >TRANSFUSIONAL CONGELADOR</option>
+                    <option value="serial_165279"         >TRANSFUSIONAL II SUPERIOR</option>
+                    <option value="serial_652801"         >COPROLOGIA INFERIOR</option>
+                    <option value="serial_65280"          >COPROLOGIA SUPERIOR</option>
+                    <option value="serial_53478"          >CITOGENÉTICA</option>
+                    <option value="serial_65279"          >TRANSFUSIONAL II INFERIOR</option>
+                    <option value="serial_53441"          >PATOLOGIA 098367</option>
+                    <option value="serial_53446"          >MICROBIOLOGIA 32</option>
+                    <option value="serial_53453"          ></option>
+                    <option value="serial_53454"          >PATOLOGIA 098368</option>
+                    <option value="serial_53455"          >MICROBIOLOGIA 30</option>
+                    <option value="serial_53458"          >MICROBIOLOGIA 31</option>
+                    <option value="serial_53461"          ></option>
+                    <option value="serial_53464"          >PATOLOGIA 098369</option>
+                    <option value="serial_53465"          >CITOGENETICA 61006</option>
+                    <option value="serial_53474"          >PATOLOGIA 098364</option>
+                    <option value="serial_53476"          ></option>
+                    <option value="serial_53481"          ></option>
+                    <!-- Adicione outras opções conforme necessário -->
+                </select>
+            </div>
+            <div class="col-md-4 mb-3 mb-md-0">
+                <label for="dataInicial">Data Inicial:</label>
+                <input type="date" id="dataInicial" name="dataInicial" class="form-control">
+            </div>
+            <div class="col-md-4 mb-3 mb-md-0">
+                <label for="dataFinal">Data Final:</label>
+                <input type="date" id="dataFinal" name="dataFinal" class="form-control">
+            </div>
+        </div>
+        <div class="text-center mb-4">
+            <button id="btnEnviar" class="btn btn-primary" title="Clique para pesquisar os dados no período selecionado acima">Pesquisar</button>
+            <button id="btnPdf" class="btn btn-primary">Baixar PDF</button>
+        </div>
+        <div class="intervalo-tempo">
+            <h6>Intervalo de Tempo</h6>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="minuto5" name="minuto" value="5" class="form-check-input">
+                <label for="minuto5" class="form-check-label">5 Minutos</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="minuto10" name="minuto" value="10" class="form-check-input">
+                <label for="minuto10" class="form-check-label">10 Minutos</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="minuto15" name="minuto" value="15" class="form-check-input">
+                <label for="minuto15" class="form-check-label">15 Minutos</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="minuto30" name="minuto" value="30" class="form-check-input">
+                <label for="minuto30" class="form-check-label">30 Minutos</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="hora" name="minuto" value="60" checked class="form-check-input">
+                <label for="hora" class="form-check-label">1 Hora</label>
+            </div>
+        </div>
+        <div id="loadingMessage" style="display: none;">
+            <div class="spinner"></div>
+            <p>Aguarde, estamos processando os dados...</p>
+        </div>
+        <div class="chart-container">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+
+    <script src="./style/chart.js.download"></script>
+    <script src="./style/jquery-3.6.0.min.js.download"></script>
+    <script>
+        $(document).ready(function() {
+            // Função para obter o parâmetro "room" da URL
+            function getRoomFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                console.log(urlParams.get('room'));
+                return urlParams.get('room');
+            }
+    
+            // Função para mapear o nome da sala para o valor do dropdown
+            function mapRoomToValue(roomName) {
+                const roomMap = {
+                    'MICROBIOLOGIA': 'escravo15',
+                    'MICROBIOLOGIA_II': 'escravo20',
+                    'IMUNOLOGIA': 'escravo12',
+                    'IMUNOLOGIA_II': 'escravo11',
+                    'CITOGENETICA_II': 'escravo9',
+                    'CITOGENETICA_I': 'escravo8',
+                    'HEMATOLOGIA': 'escravo5',
+                    'BIOQUIMICA_I': 'escravo13',
+                    'BIOQUIMICA_II': 'escravo14',
+                    'Bioquimica_Genetica': 'escravo10',
+                    'BIOLOGIA_MOLECULAR': 'escravo19',
+                    'IMUNOLOGIA_IV': 'escravo21',
+                    'IMUNOLOGIA_III': 'escravo22',
+                    'BIOQUIMICA_ANALITICA': 'escravo1',
+                    'BIOQUIMICA_GENETICA_II': 'escravo2',
+                    "Bioquimica":"serial_53443",
+                    "Hematologia_II":"serial_53449",
+                    "Reserva":"serial_53450",
+                    "Amostras_Processadas":"serial_65274",
+                    "Imuno_I" :"serial_65275",
+                    "Imuno_II":"serial_65276",
+                    "Microbiologia_IV":"serial_65277",
+                    "Microbiologia_III":"serial_65282",
+                    "Transfusional_Congelador":"serial_965281",
+                    "Transfusional_Refrigerador":"serial_65281",
+                    "Transfusional_II_Superior":"serial_165279",
+                    "Coprologia_Inferior":"serial_652801",
+                    "Coprologia_Superior":"serial_65280",
+                    "Citogenetica":"serial_53478",
+                    "Transfusional_II_Inferior":"serial_65279",
+                    "Patologia_098367":"serial_53441",
+                    "Microbiologia_32":"serial_53446",
+                    "":"serial_53453",
+                    "Patologia__098368":"serial_53454",
+                    "Microbiologia_30":"serial_53455",
+                    "Microbiologia_31":"serial_53458",
+                    "":"serial_53461",
+                    "Patologia_098369":"serial_53464",
+                    "Citogenetica_61006":"serial_53465",
+                    "Patologia_098364":"serial_53474",
+                    "":"serial_53476",
+                    "":"serial_53481",
+                };
+                return roomMap[roomName] || 'CAF'; // Retorna 'CAF' como padrão se não encontrar o valor
+            }
+    
+            // Captura o valor de "room" e seleciona a opção correspondente no dropdown
+            const room = getRoomFromURL();
+            console.log(room);
+            if (room) {
+                const mappedValue = mapRoomToValue(room);
+                $('#area').val(mappedValue);
+            }
+        });
+    </script>
+    <script src="./js/freezerscript.js"></script>
+</body>
+</html>

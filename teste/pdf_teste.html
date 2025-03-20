@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Salvar JSON em PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+</head>
+<body>
+    <button id="btnSalvarPDF">Salvar JSON em PDF</button>
+
+    <script>
+        // Exemplo de objeto JSON
+        var jsonData = {
+            "nome": "John Doe",
+            "idade": 30,
+            "email": "johndoe@example.com"
+        };
+
+        // Função para salvar o JSON como PDF
+        function salvarJSONComoPDF() {
+            // Criar um documento PDF
+            var docDefinition = {
+                content: [
+                    { text: 'JSON Data', style: 'header' },
+                    { text: JSON.stringify(jsonData, null, 4) }
+                ],
+                styles: {
+                    header: {
+                        fontSize: 18,
+                        bold: true,
+                        marginBottom: 10
+                    }
+                }
+            };
+
+            // Gerar o arquivo PDF
+            pdfMake.createPdf(docDefinition).download("arquivo.pdf");
+        }
+
+        // Associar a função ao evento de clique do botão
+        document.getElementById("btnSalvarPDF").addEventListener("click", salvarJSONComoPDF);
+    </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Patologia</title>
+    <link rel="stylesheet" href="style/bootstrap.min.css">
+    <link rel="icon" href="style/Farm.png" type="image/png">
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">Tempo real - Salas</h1>
+            <div class="dropdown">
+                <button class="dropdown-btn">Menu</button>
+                <div class="dropdown-content">
+                    <a href="index.html">Tempo real</a>
+                    <a href="Fancoils.html">Salas</a>
+                    <a href="Refrigeradores.html">Refrigeradores</a>
+                </div>
+            </div>
+        </div>
+        <div class="data-container" id="room-data">
+            <!-- Os dados das salas serão inseridos aqui -->
+        </div>
+        <div class="header">
+            <h1 class="header-title">Refrigeradores</h1>
+        </div>
+        <div class="data-container" id="fridge-data">
+            <!-- Os dados dos refrigeradores serão inseridos aqui -->
+        </div>
+    </div>
+
+    <!-- Modal Popup -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" text-align="right" >&times;</span>
+            <h2>SetPoint de Temperatura</h2>
+            <form id="setpointForm">
+                <label for="newSetpoint">SetPoint (°C):</label>
+                <input type="number" id="newSetpoint" name="newSetpoint" max= "25" min ="16" required>
+                <input type="hidden" id="roomName" name="roomName">
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="style/jquery-3.6.0.min.js.download"></script>
+    <script>
+function fetchData() {
+    $.ajax({
+        url: './php/api_rq.php',
+        method: 'GET',
+        success: function(data) {
+            const roomData = $('#room-data');
+            roomData.empty();
+            for (const [room, values] of Object.entries(data)) {
+                const [humidity, temperature, insulflamento, valvula, temperaturaSP, umidadeSP] = values;
+                
+                // Calcula a diferença entre a temperatura e o setpoint
+                const tempDiff = Math.abs(temperature - temperaturaSP);
+                
+                // Definir a cor do background baseado na diferença
+                let backgroundColor = '';
+                
+                if ((room.startsWith("Bio") || room.startsWith("Hemato") 
+                || room.startsWith("Central")|| room.startsWith("Imuno") 
+            || room.startsWith("Micro") ||room.startsWith("Coleta")||room.startsWith("Agencia")) &&  tempDiff <= 2 ){
+                    backgroundColor = '#1eeb4d'; // Verde se estiver dentro da margem 
+                }
+                else {
+                    backgroundColor = '#ff3636'; // Vermelho se estiver fora da margem
+                }
+
+                const tooltip = `
+                    <div class="tooltiptext">
+                        <div> Setpoints </div>
+                        <div> Temperatura: <br> ${temperaturaSP} °C</div>
+                        ${umidadeSP !== 0 ? `<div> Umidade: <br> ${umidadeSP} %</div>` : ''}
+                    </div>
+                `;
+                const editButton = `<button class="edit-btn" data-room="${room}" data-temp="${temperaturaSP}"></button>`;
+                if (room.startsWith("Bio") || room.startsWith("Hemato") || room.startsWith("Central") 
+                || room.startsWith("Imuno") || room.startsWith("Micro") || room.startsWith("Coleta")||room.startsWith("Agencia")) {
+                    roomData.append(`
+                        <div class="data-box" style="background-color: ${backgroundColor};">
+                            <a href="Fancoils.html?room=${room}">
+
+                                <div class="data-title">${room}</div>
+                            </a>
+                            <div class="temp-value">${temperature} °C</div>
+                            ${humidity !== 0 ? `<div class="humidity-value">${humidity} %</div>` : ''}
+                            ${tooltip}
+                            ${editButton}
+                        </div>
+                    `);
+                }
+            }
+
+            // Adiciona o evento de clique aos botões de edição
+            $('.edit-btn').on('click', function() {
+                const room = $(this).data('room');
+                const temp = $(this).data('temp');
+                $('#roomName').val(room);
+                $('#newSetpoint').val(temp);
+                $('#editModal').show();
+            });
+        },
+        error: function() {
+            console.log('Erro ao obter dados');
+        }
+    });
+}
+
+function fetchGelas() {
+    $.ajax({
+        url: './php/php_gelas_teste.php',
+        method: 'GET',
+        success: function(data) {
+            const fridgeData = $('#fridge-data');
+            fridgeData.empty();
+
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            const formatDate = (date) => {
+                return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+            };
+
+            for (const [room, values] of Object.entries(data)) {
+                // Processamento dos valores
+                [data, minutos] = values[0].split(' ');
+                const [ano, mes, dia] = data.split('-');
+                const leituraDate = `${dia}/${mes}/${ano} ${minutos}`;
+                
+                const leituraObjDate = new Date(ano, mes - 1, dia);
+                
+                const [datel, tempe, sp, alta, baixa] = values.map(parseFloat);
+                const tempDiff = Math.abs(tempe - sp);
+
+                // Definir a cor do background baseado na diferença e atualização
+                let backgroundColor = '';
+
+                if (tempe > baixa && tempe < alta && sp < 0) {
+                    backgroundColor = '#1eeb4d'; // Verde se estiver dentro da margem
+                } else if (tempe > baixa && tempe < alta && sp > 0) {
+                    backgroundColor = '#1eeb4d'; // Verde se estiver dentro da margem de 2 e 8
+                } else {
+                    backgroundColor = '#ff3636'; // Vermelho se estiver fora da margem
+                }
+
+                // Verificar se a leitura é de hoje ou ontem
+                const leituraFormatted = formatDate(leituraObjDate);
+                const todayFormatted = formatDate(today);
+                const yesterdayFormatted = formatDate(yesterday);
+
+                if (leituraFormatted !== todayFormatted && leituraFormatted !== yesterdayFormatted) {
+                    backgroundColor = '#ffcc00'; // Amarelo para leituras desatualizadas
+                }
+
+                const tooltip = `
+                    <div class="tooltiptext">
+                        <div> Setpoint </div>
+                        <div> Temperatura: <br> ${sp} °C</div>
+                        <div> Data Leitura: </div>
+                        <div>  ${leituraDate} </div>
+                    </div>
+                `;
+
+                const editButton = `<button class="edit-btn" data-room="${room}" data-temp="${sp}"></button>`;
+
+                if (room.startsWith("") || room.startsWith("Dose") || room.startsWith("CPE") || room.startsWith("CAF")) {
+                    const formattedRoom = room.replace(/_/g, ' ');
+
+                    fridgeData.append(`
+                        <div class="data-box" style="background-color: ${backgroundColor};">
+                            <a href="refrigeradores.html?room=${room}">
+                                <div class="data-title">${formattedRoom}</div>
+                            </a>
+                            <div class="tempe-value">${tempe} °C</div>
+                            ${tooltip}
+                        </div>
+                    `);
+                }
+            }
+
+            // Adiciona o evento de clique aos botões de edição
+            $('.edit-btn').on('click', function() {
+                const room = $(this).data('room');
+                const temp = $(this).data('temp');
+                $('#roomName').val(room);
+                $('#newSetpoint').val(temp);
+                $('#editModal').show();
+            });
+        },
+        error: function() {
+            console.log('Erro ao obter dados dos refrigeradores.');
+        }
+    });
+}
+                   
+        $(document).ready(function() {
+            fetchData(); // Fetch data when the page loads
+            fetchGelas(); // Fetch data when the page loads
+            setInterval(fetchData, 1000); // Fetch data every 1 second
+            setInterval(fetchGelas, 30000); // Fetch data every 30 second
+
+            // Fecha o modal quando o botão de fechar é clicado
+            $('.close').on('click', function() {
+                $('#editModal').hide();
+            });
+
+            // Fecha o modal quando o usuário clica fora do conteúdo do modal
+            $(window).on('click', function(event) {
+                if (event.target.id === 'editModal') {
+                    $('#editModal').hide();
+                }
+            });
+
+            // Lida com o envio do formulário de setpoint
+            $('#setpointForm').on('submit', function(event) {
+                event.preventDefault();
+                const room = $('#roomName').val();
+                const newSetpoint = $('#newSetpoint').val();
+                $.ajax({
+                    url: './php/api_pt.php', // Altere para o endpoint correto
+                    method: 'POST',
+                    data: {
+                        room: room,
+                        newSetpoint: newSetpoint
+                    },
+                    success: function() {
+                        alert('SetPoint atualizado com sucesso!');
+                        $('#editModal').hide();
+                        fetchData(); // Atualiza os dados após a mudança
+                    },
+                    error: function() {
+                        alert('Erro ao atualizar SetPoint.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

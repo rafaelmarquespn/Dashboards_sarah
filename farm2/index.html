@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Farmácia em tempo real</title>
+    <link rel="stylesheet" href="style/bootstrap.min.css">
+    <link rel="icon" href="style/Farm.png" type="image/png">
+    <style>
+        body {
+            background-color: #f7f7f7;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 2rem;
+        }
+
+        .data-box {
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            text-align: center;
+            padding: 2rem;
+            margin: 1rem;
+            font-size: 1.5rem;
+            color: #333;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative; /* Necessário para a tooltip */
+        }
+
+        .data-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            color: #0056b3;
+        }
+
+        .temp-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .tempe-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .humidity-value {
+            font-size: 1.5rem;
+            color: #007bff;
+        }
+
+        .data-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .refresh-btn {
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            margin: 0.5rem;
+            display: block;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .refresh-btn:hover {
+            background-color: #0056b3;
+            border-color: #004080;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #76aee6;
+            color: rgb(10, 10, 10);
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+
+        .btn-back {
+            background-color: white;
+            color: #0056b3;
+            border: 1px solid #0056b3;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            background-color: #e6e6e6;
+        }
+
+        .tooltiptext {
+            visibility: hidden;
+            width: 130px;
+            background-color: rgba(90, 150, 235, 0.4);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            top: 50%;
+            left: 105%; /* Posiciona a tooltip à direita */
+            transform: translateY(-50%);
+            font-size: 0.875rem; /* Diminui o tamanho do texto */
+        }
+
+        .tooltiptext::after {
+            content: " ";
+            position: absolute;
+            top: 50%;
+            right: 100%; /* À esquerda da tooltip */
+            margin-top: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent rgb(47, 41, 218) transparent transparent;
+        }
+
+        .data-box:hover .tooltiptext {
+            visibility: visible;
+        }
+
+        .edit-btn {
+            background: url('style/edit-icon.png') no-repeat center center;
+            background-size: contain;
+            width: 24px;
+            height: 24px;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .modal {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: #0056b3;
+        }
+
+        .modal-content input[type="number"], .modal-content button {
+            width: calc(100% - 2rem);
+            margin: 0.5rem 1rem;
+            padding: 0.75rem 12rem;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ccc;
+        }
+
+        .modal-content button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #004080;
+        }
+
+        .modal-content input[type="number"]:focus, .modal-content button:focus {
+            outline: none;
+            border-color: #76aee6;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background-color: #0056b3;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown-btn:hover {
+            background-color: #004080;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+            z-index: 1;
+            min-width: 160px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">Tempo real - Salas</h1>
+            <div class="dropdown">
+                <button class="dropdown-btn">Menu</button>
+                <div class="dropdown-content">
+                    <a href="index.html">Tempo real</a>
+                    <a href="Fancoils.html">Salas</a>
+                    <a href="Refrigeradores.html">Refrigeradores</a>
+                </div>
+            </div>
+        </div>
+        <div class="data-container" id="room-data">
+            <!-- Os dados das salas serão inseridos aqui -->
+        </div>
+        <div class="header">
+            <h1 class="header-title">Refrigeradores</h1>
+        </div>
+        <div class="data-container" id="fridge-data">
+            <!-- Os dados dos refrigeradores serão inseridos aqui -->
+        </div>
+    </div>
+
+    <!-- Modal Popup -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" text-align="right" >&times;</span>
+            <h2>SetPoint de Temperatura</h2>
+            <form id="setpointForm">
+                <label for="newSetpoint">SetPoint (°C):</label>
+                <input type="number" id="newSetpoint" name="newSetpoint" max= "25" min ="16" required>
+                <input type="hidden" id="roomName" name="roomName">
+                <button type="submit">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="style/jquery-3.6.0.min.js.download"></script>
+    <script>
+        function fetchData() {
+            $.ajax({
+                url: './js/api_rq.php',
+                method: 'GET',
+                success: function(data) {
+                    const fridgeData = $('#fridge-data');
+                    const roomData = $('#room-data');
+                    roomData.empty();
+                    //fridgeData.empty();
+                    for (const [room, values] of Object.entries(data)) {
+                        const [humidity, temperature, insulflamento, valvula, temperaturaSP, umidadeSP] = values;
+                        const tooltip = `
+                            <div class="tooltiptext">
+                                <div> Setpoints </div>
+                                <div> Temperatura: <br> ${temperaturaSP} °C</div>
+                                <div> Umidade: <br> ${umidadeSP} %</div>
+                            </div>
+                        `;
+
+                        const editButton = `<button class="edit-btn" data-room="${room}" data-temp="${temperaturaSP}"></button>`;
+
+                        if (room.startsWith("Area") || room.startsWith("Entrada") || room.startsWith("Quimio") || room.startsWith("CAF")|| room.startsWith("Parenteral")) {
+                            roomData.append(`
+                                <div class="data-box">
+                                    <a href="Fancoils.html?room=${room}">
+                                        <div class="data-title">${room}</div>
+                                    </a>
+                                    <div class="temp-value">${temperature} °C</div>
+                                    <div class="humidity-value">${humidity} %</div>
+                                    ${tooltip}
+                                    ${editButton}
+                                </div>
+                            `);
+                        } 
+                    }
+
+                    // Adiciona o evento de clique aos botões de edição
+                    $('.edit-btn').on('click', function() {
+                        const room = $(this).data('room');
+                        const temp = $(this).data('temp');
+                        $('#roomName').val(room);
+                        $('#newSetpoint').val(temp);
+                        $('#editModal').show();
+                    });
+                },
+                error: function() {
+                    console.log('Erro ao obter dados');
+                }
+            });
+        }
+         function fetchGelas() {
+            $.ajax({
+        url: './js/php_gelas_teste.php',  // Verifique se a URL está correta
+        method: 'GET',
+        success: function(data) {
+            //console.log("Dados recebidos para refrigeradores:", data);  // Verifica se os dados estão sendo recebidos
+
+            const fridgeData = $('#fridge-data');  // Seleciona o contêiner dos refrigeradores
+            fridgeData.empty();  // Limpa os dados anteriores
+
+            for (const [room, values] of Object.entries(data)) {
+                // Verifique se cada item está sendo processado corretamente
+                //console.log(`Processando: ${room}`, values);
+
+                // Extrai os valores do array: [data, temperatura, setpoint]
+                const [date, tempe, sp] = values;
+
+                // Verifica se os valores estão corretos
+                //console.log(`Refrigerador: ${room}, Temperatura: ${tempe}, SetPoint: ${sp}`);
+
+                // Cria o tooltip com as informações de setpoint
+                const tooltip = `
+                    <div class="tooltiptext">
+                        <div> Setpoints </div>
+                        <div> Temperatura: <br> ${sp} °C</div>
+                    </div>
+                `;
+
+                // Cria o botão de edição
+                const editButton = `<button class="edit-btn" data-room="${room}" data-temp="${sp}"></button>`;
+
+                // Verifica se o nome do refrigerador começa com "serial"
+                if (room.startsWith("serial")) {
+                    //console.log("Adicionando refrigerador à página:", room);
+
+                    // Cria o bloco HTML para cada refrigerador
+                    fridgeData.append(`
+                        <div class="data-box">
+                            <a href="refrigeradores.html?room=${room}">
+                                <div class="data-title">${room}</div>
+                            </a>
+                            <div class="tempe-value">${tempe} °C</div>
+                            ${tooltip}
+                            ${editButton}
+                        </div>
+                    `);
+                }
+        }
+
+        // Adiciona o evento de clique aos botões de edição
+        $('.edit-btn').on('click', function() {
+            const room = $(this).data('room');
+            const temp = $(this).data('temp');
+            $('#roomName').val(room);
+            $('#newSetpoint').val(temp);
+            $('#editModal').show();
+            });
+        },
+        error: function() {
+            console.log('Erro ao obter dados dos refrigeradores.');
+        }
+            });
+
+         }
+                   
+        $(document).ready(function() {
+            fetchData(); // Fetch data when the page loads
+            fetchGelas(); // Fetch data when the page loads
+            setInterval(fetchData, 1000); // Fetch data every 1 second
+            setInterval(fetchGelas, 30000); // Fetch data every 30 second
+
+            // Fecha o modal quando o botão de fechar é clicado
+            $('.close').on('click', function() {
+                $('#editModal').hide();
+            });
+
+            // Fecha o modal quando o usuário clica fora do conteúdo do modal
+            $(window).on('click', function(event) {
+                if (event.target.id === 'editModal') {
+                    $('#editModal').hide();
+                }
+            });
+
+            // Lida com o envio do formulário de setpoint
+            $('#setpointForm').on('submit', function(event) {
+                event.preventDefault();
+                const room = $('#roomName').val();
+                const newSetpoint = $('#newSetpoint').val();
+                $.ajax({
+                    url: './js/api_pt.php', // Altere para o endpoint correto
+                    method: 'POST',
+                    data: {
+                        room: room,
+                        newSetpoint: newSetpoint
+                    },
+                    success: function() {
+                        alert('SetPoint atualizado com sucesso!');
+                        $('#editModal').hide();
+                        fetchData(); // Atualiza os dados após a mudança
+                    },
+                    error: function() {
+                        alert('Erro ao atualizar SetPoint.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

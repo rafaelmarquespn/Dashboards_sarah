@@ -1,7 +1,7 @@
 <?php
 function fetchData() {
-    $url = 'http://192.168.30.248:8001/get_bomba';
-    // $url = 'localhost:8000/get_bomba';
+     $url = 'http://192.168.30.248:8000/get_tudo';
+    //$url = 'http://localhost:8000/get_tudo';
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($ch);

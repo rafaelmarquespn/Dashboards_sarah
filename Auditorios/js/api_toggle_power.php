@@ -17,15 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
     
     $room = $_POST['room'] ?? '';
-    $newSetpoint = $_POST['newSetpoint'] ?? '';
+    $newState = $_POST['newState'] ?? '';
 
-    if (!empty($room) && is_numeric($newSetpoint)) {
+    if (!empty($room) && is_string($newState)) {
         // Dados para enviar
         $data = [
             'room' => $room,
-            'newSetpoint' => $newSetpoint
+            'newState' => 'on'
         ];
-        $url = 'http://192.168.30.99:8000/post_cc'; // URL para onde os dados serão enviados
+        $url = 'http://192.168.30.248:8000/toggle_audit'; // URL para onde os dados serão enviados
         //$url = 'http://localhost:8000/post_cc'; // URL para onde os dados serão enviados
         
         $response = postData($url, $data);

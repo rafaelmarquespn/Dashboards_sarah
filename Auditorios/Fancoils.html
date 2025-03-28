@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Fancoils</title>
+    <script src="style/pdfmake.min.js.download"></script>
+    <script src="style/vfs_fonts.js.download"></script>
+    <link rel="stylesheet" href="style/bootstrap.min.css">
+    <link rel="icon" href="style/Farm.png" type="image/png">
+
+    <style>
+        body {
+            background-color: #f7f7f7; /* Cor de fundo clara */
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #76aee6;
+            color: #0a0a0a;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .btn-group .btn-primary {
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Azul mais escuro no hover */
+            border-color: #004080;
+        }
+
+        .dropdown-menu .dropdown-item {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+
+        .dropdown-menu .dropdown-item:hover {
+            background-color: #e6e6e6;
+        }
+
+        .form-control {
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #chart {
+            height: 400px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .intervalo-tempo {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .intervalo-tempo label {
+            margin-right: 1rem;
+        }
+
+        .form-check-input {
+            margin-right: 0.5rem;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background-color: #0056b3;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        .dropdown-btn:hover {
+            background-color: #004080;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+            z-index: 1;
+            min-width: 160px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="header-title">Temperatura das Salas</h1>
+            <div class="dropdown">
+                <button class="dropdown-btn">Menu</button>
+                <div class="dropdown-content">
+                    <a href="index.html">Tempo real</a>
+                    <a href="Fancoils.html">Salas</a>
+                    <a href="Refrigeradores.html">Refrigeradores</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3 mb-md-0">
+                <label for="area">Área escolhida:</label>
+                <select id="area" name="area" class="form-control">
+                    <option value="Lactario">Lactário</option>
+                    
+                    
+                </select>
+            </div>
+            <div class="col-md-4 mb-3 mb-md-0">
+                <label for="dataInicial">Data Inicial:</label>
+                <input type="date" id="dataInicial" name="dataInicial" class="form-control">
+            </div>
+            <div class="col-md-4 mb-3 mb-md-0">
+                <label for="dataFinal">Data Final:</label>
+                <input type="date" id="dataFinal" name="dataFinal" class="form-control">
+            </div>
+        </div>
+
+        <div class="text-center mb-4">
+            <button id="btnEnviar" class="btn btn-primary">Enviar</button>
+            <button id="btnPdf" class="btn btn-primary">Baixar PDF</button>
+        </div>
+
+        <div class="intervalo-tempo">
+            <h6>Intervalo de Tempo</h6>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="minuto5" name="minuto" value="5" class="form-check-input">
+                <label for="minuto5" class="form-check-label">5 Minutos</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="minuto10" name="minuto" value="10" class="form-check-input">
+                <label for="minuto10" class="form-check-label">10 Minutos</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="minuto15" name="minuto" value="15" class="form-check-input">
+                <label for="minuto15" class="form-check-label">15 Minutos</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="minuto30" name="minuto" value="30" class="form-check-input">
+                <label for="minuto30" class="form-check-label">30 Minutos</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input type="radio" id="hora" name="minuto" value="60" checked class="form-check-input">
+                <label for="hora" class="form-check-label">1 Hora</label>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="chart"></canvas>
+        </div>
+    </div>
+
+    <script src="style/chart.js.download"></script>
+    <script src="./style/jquery-3.6.0.min.js.download"></script>
+    <script>
+        $(document).ready(function() {
+            // Função para obter o parâmetro "room" da URL
+            function getRoomFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+                console.log(urlParams.get('room'));
+                return urlParams.get('room');
+            }
+    
+            // Função para mapear o nome da sala para o valor do dropdown
+            function mapRoomToValue(roomName) {
+                const roomMap = {
+                    'lactario': 'Lactario',
+                    
+                };
+                return roomMap[roomName] || 'Lactario'; // Retorna 'CAF' como padrão se não encontrar o valor
+            }
+    
+            // Captura o valor de "room" e seleciona a opção correspondente no dropdown
+            const room = getRoomFromURL();
+            console.log(room);
+            if (room) {
+                const mappedValue = mapRoomToValue(room);
+                $('#area').val(mappedValue);
+            }
+        });
+    </script>
+    <script src="./js/script_Farm.js"></script>
+    
+</body>
+</html>

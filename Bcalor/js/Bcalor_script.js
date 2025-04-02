@@ -1,6 +1,6 @@
 $(document).ready(function () {
     let chart1, chart2; // Variáveis globais para os gráficos
-    const dbName = "sistema_bombas_rms";
+    const dbName = "skids";
     let intervalo = $('input[name="minuto"]:checked').val(); // Intervalo inicial selecionado
     let startDate, endDate;
 
@@ -65,15 +65,19 @@ $(document).ready(function () {
             dataType: 'json',
             data: { startDate: startDate, endDate: endDate, dbname: dbName, intervalo: intervalo },
             success: function (data) {
+
                 if (chart1) { chart1.destroy(); }
+
                 if (chart2) { chart2.destroy(); }
                 
                 if (data.bomba_de_calor1.length > 0) {
+                    console.log(data.bomba_de_calor1);
                     drawChart(data.bomba_de_calor1, 'chart1', 'Bomba de Calor 1');
                 } else {
                     alert('Nenhum dado encontrado para a Bomba de Calor 1 no período selecionado.');
                 }
                 if (data.bomba_de_calor2.length > 0) {
+                    console.log(data.bomba_de_calor2);
                     drawChart(data.bomba_de_calor2, 'chart2', 'Bomba de Calor 2');
                 } else {
                     alert('Nenhum dado encontrado para a Bomba de Calor 2 no período selecionado.');
@@ -95,7 +99,7 @@ $(document).ready(function () {
     // Recebe os dados, o id do canvas e o título do gráfico
     function drawChart(data, canvasId, chartTitle) {
         var labels = data.map(function(item) {
-            return item.time; // 'time' já vem formatado pelo PHP
+            return item.E3TimeStamp; // 'time' já vem formatado pelo PHP
         });
 
         // Exemplo: plotando seis campos – você pode ajustar conforme os dados que deseja visualizar

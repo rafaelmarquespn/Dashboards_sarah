@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Auditorios</title>
     <link rel="stylesheet" href="./style/bootstrap.min.css">
-    <link rel="icon" href="style/cc.png" type="image/png">
+    <!-- <link rel="icon" href="style/cc.png" type="image/png"> -->
     <style>
         /* Estilo geral */
         body {
@@ -273,7 +273,7 @@
 
     <!-- Tela de Carregamento -->
     <div class="loading-overlay" id="loadingOverlay">
-        Carregando...
+        Aguarde um momento...
     </div>
 
     <script src="./style/jquery-3.6.0.min.js.download"></script>
@@ -423,29 +423,23 @@
                 const room = $('#roomName').val();
                 const newSetpoint = parseFloat($('#newSetpoint').val());
 
-                showLoading(); // Exibe a tela de carregamento enquanto o processo de setpoint está em andamento
-
                 setTimeout(() => {
                     $.ajax({
                         url: './js/api_pt.php',
                         method: 'POST',
                         data: { room: room, setpoint: newSetpoint },
                         success: function() {
-                            setTimeout(() => {
-                                fetchData(); // Atualiza os dados após a mudança
+                                // fetchData(); // Atualiza os dados após a mudança
                                 //hideLoading(); // Esconde a tela de carregamento
                                 alert('Setpoint atualizado com sucesso!');
-                                hideLoading();
                                 $('#editModal').hide();
-                            }, 1000);
                         },
                         error: function() {
                             //hideLoading(); // Esconde a tela de carregamento em caso de erro
                             alert('Erro ao atualizar o setpoint.');
-                            hideLoading();
                         }
                     });
-                }, 1000); // Espera um pouco para o fetchData atualizar os valores
+                }, 100); // Espera um pouco para o fetchData atualizar os valores
             });
         });
     </script>

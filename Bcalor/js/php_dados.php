@@ -23,7 +23,7 @@ if (!empty($dataInicial) && !empty($dataFinal)) {
     
     // Query para bomba_de_calor1 com agrupamento por intervalo (em segundos)
     $sql_bomba1 = "SELECT 
-        DATE_FORMAT(MIN(data), '%d/%m/%Y %H:%i:%s') AS data,
+        DATE_FORMAT(MIN(E3TimeStamp), '%d/%m/%Y %H:%i:%s') AS E3TimeStamp,
         Ambiente,
         Compressor_1,
         Compressor_2,
@@ -38,13 +38,13 @@ if (!empty($dataInicial) && !empty($dataFinal)) {
         Status_on_off,
         Tanque
     FROM bomba_de_calor1
-    WHERE data BETWEEN '$startDate' AND '$endDate'
-    GROUP BY FLOOR(UNIX_TIMESTAMP(data)/$intervalo)
-    ORDER BY data DESC;";
+    WHERE E3TimeStamp BETWEEN '$startDate' AND '$endDate'
+    GROUP BY FLOOR(UNIX_TIMESTAMP(E3TimeStamp)/$intervalo)
+    ORDER BY E3TimeStamp DESC;";
     
     // Query para bomba_de_calor2 com agrupamento por intervalo
     $sql_bomba2 = "SELECT 
-        DATE_FORMAT(MIN(data), '%d/%m/%Y %H:%i:%s') AS data,
+        DATE_FORMAT(MIN(E3TimeStamp), '%d/%m/%Y %H:%i:%s') AS E3TimeStamp,
         Ambiente,
         Compressor_1,
         Compressor_2,
@@ -59,13 +59,13 @@ if (!empty($dataInicial) && !empty($dataFinal)) {
         Status_on_off,
         Tanque
     FROM bomba_de_calor2
-    WHERE data BETWEEN '$startDate' AND '$endDate'
-    GROUP BY FLOOR(UNIX_TIMESTAMP(data)/$intervalo)
-    ORDER BY data DESC;";
+    WHERE E3TimeStamp BETWEEN '$startDate' AND '$endDate'
+    GROUP BY FLOOR(UNIX_TIMESTAMP(E3TimeStamp)/$intervalo)
+    ORDER BY E3TimeStamp DESC;";
 } else {
     // Se os filtros não forem informados, retorna os últimos 100 registros de cada tabela
     $sql_bomba1 = "SELECT 
-        DATE_FORMAT(data, '%d/%m/%Y %H:%i:%s') AS data,
+        DATE_FORMAT(E3TimeStamp, '%d/%m/%Y %H:%i:%s') AS E3TimeStamp,
         Ambiente,
         Compressor_1,
         Compressor_2,
@@ -80,11 +80,11 @@ if (!empty($dataInicial) && !empty($dataFinal)) {
         Status_on_off,
         Tanque
     FROM bomba_de_calor1
-    ORDER BY data DESC
+    ORDER BY E3TimeStamp DESC
     LIMIT 100;";
     
     $sql_bomba2 = "SELECT 
-        DATE_FORMAT(data, '%d/%m/%Y %H:%i:%s') AS data,
+        DATE_FORMAT(E3TimeStamp, '%d/%m/%Y %H:%i:%s') AS E3TimeStamp,
         Ambiente,
         Compressor_1,
         Compressor_2,
@@ -99,7 +99,7 @@ if (!empty($dataInicial) && !empty($dataFinal)) {
         Status_on_off,
         Tanque
     FROM bomba_de_calor2
-    ORDER BY data DESC
+    ORDER BY E3TimeStamp DESC
     LIMIT 100;";
 }
 
